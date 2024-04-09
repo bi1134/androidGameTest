@@ -1,8 +1,11 @@
 package com.example.gametest;
 
+import android.animation.TimeInterpolator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -23,19 +26,23 @@ import com.example.gametest.gameObject.Spell;
 import com.example.gametest.gamePanel.GameOver;
 import com.example.gametest.gamePanel.Joystick;
 import com.example.gametest.gamePanel.Performance;
+import com.example.gametest.graphics.Animator;
+import com.example.gametest.graphics.SpriteSheet;
+import com.example.gametest.map.Tilemap;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private final Player player;
     private final Joystick joystick;
+    private final Tilemap tilemap;
     private GameLoop gameLoop;
     private List<Enemy> enemyList = new ArrayList<Enemy>();
     private List<Spell> spellList = new ArrayList<Spell>();
     private Context context;
-    private final Enemy enemy;
     private int joystickPointerID = 0;
     private int numberOfSpellToCast = 0;
     private GameOver gameOver;
     private Performance performance;
+    private GameDisplay gameDisplay;
 
     public Game(Context context) {
         super(context);
@@ -52,10 +59,19 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         joystick = new Joystick(275, 750, 100, 40);
 
         //initialize game objects
-        player = new Player(context, joystick, 2*500, 500, 30);
-        enemy = new Enemy(context, player, 500, 200, 30);
+        SpriteSheet spriteSheet = new SpriteSheet(context);
+        Animator animator = new Animator(spriteSheet.getPlayerSpriteArray());
+        player = new Player(context, joystick, 2*500, 500, 32, animator);
 
+
+        //initialize game display and center it around the player
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        gameDisplay = new GameDisplay(displayMetrics.widthPixels, displayMetrics.heightPixels, player);
         setFocusable(true);
+
+        //initialize tilemap
+        tilemap = new Tilemap(spriteSheet);
     }
 
     @Override
@@ -119,6 +135,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         Log.d("Game.java", "surfaceChanged()");
     }
 
+
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder)
     {
@@ -129,23 +146,28 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
 
-        player.draw(canvas);
+        //draw Tilemap
+        tilemap.draw(canvas, gameDisplay);
+
+        player.draw(canvas, gameDisplay);
         for (Enemy enemy : enemyList)
         {
-            enemy.draw(canvas);
+            enemy.draw(canvas, gameDisplay);
         }
         for (Spell spell : spellList)
         {
-            spell.draw(canvas);
+            spell.draw(canvas, gameDisplay);
         }
+
+        //game panel
         joystick.draw(canvas);
         performance.draw(canvas);
-
 
         // Draw Game over if the player is dead (health = 0)
         if (player.getHealthPoints() <= 0) {
             gameOver.draw(canvas);
         }
+
     }
 
     public void update() {
@@ -207,6 +229,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
                 }
             }
         }
+        gameDisplay.update();
     }
 
     public void pause() {

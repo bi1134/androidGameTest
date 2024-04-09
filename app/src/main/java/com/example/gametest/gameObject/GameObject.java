@@ -2,6 +2,8 @@ package com.example.gametest.gameObject;
 
 import android.graphics.Canvas;
 
+import com.example.gametest.GameDisplay;
+
 /*
     GameObject is an abstract class which is the foundation of  all world object in the game
  */
@@ -17,7 +19,7 @@ public abstract class GameObject {
         this.positionX = positionX;
         this.positionY = positionY;
     }
-    public abstract void draw(Canvas canvas);
+    public abstract void draw(Canvas canvas, GameDisplay gameDisplay);
     public abstract void update();
     public double getPositionX() {
         return positionX;

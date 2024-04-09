@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.example.gametest.R;
 import com.example.gametest.Utils;
 
 public class Joystick {

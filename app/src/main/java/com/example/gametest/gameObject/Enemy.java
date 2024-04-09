@@ -23,7 +23,7 @@ public class Enemy extends Circle {
 
     public Enemy(Context context, Player player) {
         super(context,
-              ContextCompat.getColor(context, R.color.spell),
+              ContextCompat.getColor(context, R.color.enemy),
               Math.random() * 1000,
               Math.random() * 1000,
               30);

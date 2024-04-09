@@ -5,11 +5,15 @@ import android.content.Context;
 import androidx.core.content.ContextCompat;
 import  android.graphics.Canvas;
 
+import com.example.gametest.GameDisplay;
 import com.example.gametest.GameLoop;
 import com.example.gametest.gamePanel.Joystick;
 import com.example.gametest.R;
 import com.example.gametest.Utils;
 import com.example.gametest.gamePanel.HealthBar;
+import com.example.gametest.gamePanel.Performance;
+import com.example.gametest.graphics.Animator;
+import com.example.gametest.graphics.Sprite;
 
 /*
     Player is the main character, can be controled by the touch of joystick
@@ -23,13 +27,16 @@ public class Player extends Circle {
     private final Joystick joystick;
     private HealthBar healthBar;
     private int healthPoints;
+    private Animator animator;
+    private PlayerState playerState;
 
-    public Player(Context context, Joystick joystick, double positionX, double positionY, double radius){
+    public Player(Context context, Joystick joystick, double positionX, double positionY, double radius, Animator animator){
         super(context, ContextCompat.getColor(context, R.color.player), positionX, positionY, radius);
         this.joystick = joystick;
         this.healthBar = new HealthBar(context, this);
         this.healthPoints = MAX_HEALTH_POINTS;
-
+        this.animator = animator;
+        this.playerState = new PlayerState(this);
     }
 
     public void update() {
@@ -49,12 +56,14 @@ public class Player extends Circle {
             directionY = velocityY / distance;
 
         }
+
+        playerState.update();
     }
 
-    public void draw(Canvas canvas)
+    public void draw(Canvas canvas, GameDisplay gameDisplay)
     {
-        super.draw(canvas);
-        healthBar.draw(canvas);
+        animator.draw(canvas, gameDisplay, this);
+        healthBar.draw(canvas, gameDisplay);
     }
 
 
@@ -72,5 +81,9 @@ public class Player extends Circle {
         if (healthPoints >= 0) {
             this.healthPoints = healthPoints;
         }
+    }
+
+    public PlayerState getPlayerState() {
+        return playerState;
     }
 }

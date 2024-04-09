@@ -1,6 +1,7 @@
 package com.example.gametest;
 
 import android.animation.Animator;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -59,7 +60,16 @@ public class MainActivity extends GameActivity {
         Log.d("MainActivity.java", "onStop()");
         super.onStop();
     }
-
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Handle configuration changes here
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // Do something when device orientation changes to landscape
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // Do something when device orientation changes to portrait
+        }
+    }
     @Override
     protected void onDestroy() {
         Log.d("MainActivity.java", "onDestroy()");
