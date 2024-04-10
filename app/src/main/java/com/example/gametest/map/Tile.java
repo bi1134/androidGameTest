@@ -29,7 +29,7 @@ abstract class Tile {
             case TREE_TILE:
                 return new TreeTile(spriteSheet, mapLocationRect);
             case GRASSY_TILE:
-                return new TreeTile(spriteSheet, mapLocationRect);
+                return new GrassyTile(spriteSheet, mapLocationRect);
             default:
                 return null;
         }
